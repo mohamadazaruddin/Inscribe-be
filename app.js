@@ -2,10 +2,15 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const mongoDB = require("./src/config/db");
 
-const getUserRoutes = require("./src/routes/getUser.route");
+//  calling routes
+const userRoutes = require("./src/routes/user.route");
+const commentRoutes = require("./src/routes/comment.route");
+const postRoutes = require("./src/routes/post.route");
+//end
 app.use(bodyParser.json());
-
+mongoDB(); // Db invok
 app.use(
   cors({
     origin: "*",
@@ -18,6 +23,8 @@ app.get("/", (req, res) => {
   res.json({ success: true });
 });
 
-app.use("/", getUserRoutes);
+app.use("/users", userRoutes);
+app.use("/comment", commentRoutes);
+app.use("/post", postRoutes);
 
 module.exports = app;
