@@ -26,5 +26,13 @@ router.post("/:postId/like", auth, function (req, res) {
 router.post("/:postId/comment", auth, function (req, res) {
   postController.comment(req, res);
 });
+// for getting all likes
+router.get("/:postId/like", auth, function (req, res) {
+  postController.getAlllikes(req, res);
+});
+// for getting all comments
+router.get("/:postId/comment", auth, function (req, res) {
+  postController.getComments(req, res);
+});
 
 module.exports = router;

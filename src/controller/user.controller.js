@@ -1,4 +1,12 @@
-const { getUserData, createUser, login } = require("../services/user.service");
+const {
+  getUserData,
+  createUser,
+  login,
+  follow,
+  getAllUser,
+
+  searchByUsername,
+} = require("../services/user.service");
 
 exports.getdata = (req, res) => {
   getUserData(req, res);
@@ -10,4 +18,14 @@ exports.createUser = (req, res) => {
 
 exports.userLogin = (req, res) => {
   login(req, res);
+};
+
+exports.follow = (req, res) => {
+  follow(req, res);
+};
+exports.getAllUser = (req, res) => {
+  getAllUser(req, res);
+};
+exports.searchByUsername = (req, res) => {
+  searchByUsername(req, res);
 };

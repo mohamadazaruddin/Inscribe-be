@@ -64,4 +64,82 @@ const login = (req, res) => {
     res.status(500).json({ message: err });
   }
 };
-module.exports = { getUserData, createUser, login };
+
+const getAllUser = async (req, res) => {
+  try {
+    User.find().then((user) => {
+      if (!user) {
+        res.status(204).json({ message: "Users Not Found" });
+      }
+      res.status(200).json(user);
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const follow = async (req, res) => {
+  try {
+    const { followId } = req.body;
+    User.findById(req.params.id).then((user) => {
+      if (!user) {
+        res.status(204).json({ message: "Provide Your userId" });
+      }
+      User.findById(followId).then(async (followingUser) => {
+        console.log(followingUser._id, "to follow", user._id, "me");
+        if (!followingUser) {
+          res.status(204).json({ message: "User Not userId" });
+        }
+        const addtoFollow = await User.findOneAndUpdate(
+          { _id: req.params.id },
+          { $addToSet: { following: followingUser._id } },
+          { new: true }
+        );
+
+        if (!addtoFollow) {
+          return res.status(404).json({ message: "Unable to Follow" });
+        }
+        const addtoFollowing = await User.findOneAndUpdate(
+          { _id: followingUser },
+          { $addToSet: { followers: user._id } },
+          { new: true }
+        );
+        if (!addtoFollowing) {
+          return res.status(404).json({ message: "Unable to Follow" });
+        }
+        res.status(200).json({
+          message: "Followed successfully",
+        });
+      });
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const searchByUsername = async (req, res) => {
+  try {
+    // const partialUsername = req.query.username;
+    // console.log(partialUsername, "partialUsername");
+    // UserModel.find().then((user) => {
+    //   if (!user) {
+    //     res.status(204).json({ message: "User not Found" });
+    //   }
+    //   console.log(user);
+    //   res.status(200).json(user);
+    // });
+
+    console.log("rue");
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+module.exports = {
+  getUserData,
+  createUser,
+  login,
+  follow,
+  getAllUser,
+  searchByUsername,
+};

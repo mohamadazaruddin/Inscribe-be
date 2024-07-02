@@ -4,6 +4,8 @@ const {
   getLatestPost,
   likePost,
   addComment,
+  getlikes,
+  getComments,
 } = require("../services/post.service");
 exports.newPost = (req, res) => {
   createPost(req, res);
@@ -22,4 +24,10 @@ exports.like = (req, res) => {
 };
 exports.comment = (req, res) => {
   addComment(req, res);
+};
+exports.getAlllikes = (req, res) => {
+  getlikes(req, res);
+};
+exports.getComments = (req, res) => {
+  getComments(req, res);
 };

@@ -76,7 +76,6 @@ const likePost = async (req, res) => {
   const { postId } = req.params;
   const { userId } = req.body;
 
-  console.log(postId, userId, "postIduserId");
   try {
     User.findById(userId).then(async (user) => {
       if (!user) {
@@ -126,10 +125,76 @@ const addComment = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+const getlikes = async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const post = await Post.findById(postId).populate({
+      path: "likes",
+      model: "user",
+    });
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    const extractedData = post.likes.map(({ userName, profileAvatar }) => ({
+      userName,
+      profileAvatar,
+    }));
+
+    res.status(200).json(extractedData);
+  } catch (error) {
+    console.log(error, "error");
+    res.status(500).send({ message: "Server Error" });
+  }
+};
+
+const getComments = async (req, res) => {
+  const postId = req.params.postId;
+  try {
+    const postId = req.params.postId;
+    const post = await Post.findById(postId).populate({
+      path: "comments.user",
+      select: "userName profileAvatar",
+      model: "user",
+    });
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const commentsWithUserDetails = post.comments.map((comment) => ({
+      comment: comment.comment,
+      user: comment.user.map((user) => ({
+        userName: user.userName,
+        profileAvatar: user.profileAvatar,
+      })),
+    }));
+    //  const extractedData = post.likes.map(({ userName, profileAvatar, }) => ({
+    //    userName,
+    //    profileAvatar,
+    //  }));
+
+    res.status(200).json({
+      post: {
+        content: post.content,
+        user: post.user,
+        createdAt: post.createdAt,
+        likes: post.likes,
+        comments: commentsWithUserDetails,
+      },
+    });
+  } catch (error) {
+    console.log(error, "error");
+    res.status(500).send({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   createPost,
   getUserPost,
   getLatestPost,
   likePost,
   addComment,
+  getlikes,
+  getComments,
 };
