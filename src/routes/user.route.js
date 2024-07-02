@@ -7,6 +7,9 @@ const auth = require("../middleware/auth");
 router.get("/", auth, function (req, res) {
   userController.getAllUser(req, res);
 });
+router.get("/findbyname", auth, function (req, res) {
+  userController.searchByUsername(req, res);
+});
 // getting user by id
 router.get("/:id", auth, function (req, res) {
   userController.getdata(req, res);
@@ -28,8 +31,5 @@ router.post("/:id/follow", auth, function (req, res) {
 });
 
 // to follow someone
-router.get("/search", auth, function (req, res) {
-  userController.searchByUsername(req, res);
-});
 
 module.exports = router;

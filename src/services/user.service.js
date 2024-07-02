@@ -119,17 +119,15 @@ const follow = async (req, res) => {
 
 const searchByUsername = async (req, res) => {
   try {
-    // const partialUsername = req.query.username;
-    // console.log(partialUsername, "partialUsername");
-    // UserModel.find().then((user) => {
-    //   if (!user) {
-    //     res.status(204).json({ message: "User not Found" });
-    //   }
-    //   console.log(user);
-    //   res.status(200).json(user);
-    // });
-
-    console.log("rue");
+    const partialUsername = req.query.username;
+    User.find({
+      userName: { $regex: "^" + partialUsername, $options: "i" },
+    }).then((user) => {
+      if (!user) {
+        res.status(204).json({ message: "User not Found" });
+      }
+      res.status(200).json(user);
+    });
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
