@@ -46,16 +46,26 @@ const getLatestPost = async (req, res) => {
   try {
     let posts;
     if (query === "newest") {
-      posts = await Post.find().sort({ createdAt: -1 });
+      posts = await Post.find()
+        .populate({
+          path: "user",
+          model: "user",
+        })
+        .sort({ createdAt: -1 });
     } else if (query === "following") {
       User.findById(req.params.id).then(async (user) => {
         if (!user) {
           return res.status(204).json({ message: "User Not Found" });
         }
         const following = user.following; // Assuming following is an array of user IDs
-        posts = await Post.find({ user: { $in: following } }).sort({
-          createdAt: -1,
-        });
+        posts = await Post.find({ user: { $in: following } })
+          .populate({
+            path: "user",
+            model: "user",
+          })
+          .sort({
+            createdAt: -1,
+          });
       });
     } else {
       return res.status(400).json({

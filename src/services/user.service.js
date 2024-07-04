@@ -47,17 +47,19 @@ const login = (req, res) => {
     User.find({ userName: username }).then(async (user) => {
       if (!user.length > 0) {
         res.status(400).json({ message: "Invalid Credentials" });
+      } else {
+        const isPasswordMatch = await bcrypt.compare(
+          password,
+          user[0].password
+        );
+        if (!isPasswordMatch) {
+          return res.status(400).json({ message: "Incorrect Password" });
+        }
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_TOKEN, {
+          expiresIn: "5h",
+        });
+        res.status(200).json({ user: user[0], token });
       }
-
-      console.log(user[0].password);
-      const isPasswordMatch = await bcrypt.compare(password, user[0].password);
-      if (!isPasswordMatch) {
-        return res.status(400).json({ message: "Incorrect Password" });
-      }
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_TOKEN, {
-        expiresIn: "5h",
-      });
-      res.status(200).json({ user: user[0], token });
     });
   } catch (err) {
     console.log(err, "login error");
