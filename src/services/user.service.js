@@ -17,6 +17,7 @@ const getUserData = (req, res) => {
           following: list.following,
           posts: post,
           accountCreatedAt: list.accountCreatedAt,
+          bio: list.bio,
         };
 
         res.send(user);
@@ -43,6 +44,7 @@ const createUser = (async = async (req, res) => {
         password: hashedPassword,
         profileAvatar: profilepicture,
         bio: bio,
+        accountCreatedAt: Date.now(),
       });
 
       const user = {

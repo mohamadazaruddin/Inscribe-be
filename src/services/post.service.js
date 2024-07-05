@@ -12,6 +12,7 @@ const createPost = (req, res) => {
       const newPost = new Post({
         user: user._id,
         content: content,
+        createdAt: Date.now(),
       });
       newPost
         .save()
