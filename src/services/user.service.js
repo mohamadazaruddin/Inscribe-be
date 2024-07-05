@@ -7,7 +7,16 @@ const getUserData = (req, res) => {
     .populate({ path: "following", model: "user" })
     .populate({ path: "followers", model: "user" })
     .then((list) => {
-      res.send(list);
+      const user = {
+        id: list._id,
+        username: list.userName,
+        password: list.profileAvatar,
+        followers: list.followers,
+        following: list.following,
+        accountCreatedAt: list.accountCreatedAt,
+      };
+
+      res.send(user);
     })
     .catch((err) => {
       res.send(err);
@@ -16,7 +25,7 @@ const getUserData = (req, res) => {
 // register user
 const createUser = (async = async (req, res) => {
   try {
-    const { username, password, profilepicture } = req.body;
+    const { username, password, profilepicture, bio } = req.body;
 
     User.find({ userName: username }).then(async (userExist) => {
       if (userExist.length > 0) {
@@ -29,11 +38,15 @@ const createUser = (async = async (req, res) => {
         userName: username,
         password: hashedPassword,
         profileAvatar: profilepicture,
+        bio: bio,
       });
 
-      res
-        .status(201)
-        .json({ message: "User Registered Successfully", newUser });
+      const user = {
+        id: newUser._id,
+        username: newUser.userName,
+        profilepicture: newUser.profileAvatar,
+      };
+      res.status(201).json({ message: "User Registered Successfully", user });
     });
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
@@ -58,7 +71,14 @@ const login = (req, res) => {
         const token = jwt.sign({ userId: user.id }, process.env.JWT_TOKEN, {
           expiresIn: "5h",
         });
-        res.status(200).json({ user: user[0], token });
+
+        const loggedInuser = {
+          id: user[0]._id,
+          username: user[0].userName,
+          profilepicture: user[0].profileAvatar,
+        };
+
+        res.status(200).json({ loggedInuser, token });
       }
     });
   } catch (err) {
@@ -73,7 +93,14 @@ const getAllUser = async (req, res) => {
       if (!user) {
         res.status(204).json({ message: "Users Not Found" });
       }
-      res.status(200).json(user);
+
+      const users = user.map(({ _id, userName, profileAvatar }) => ({
+        _id,
+        userName,
+        profileAvatar,
+      }));
+
+      res.status(200).json(users);
     });
   } catch (err) {
     res.status(500).json({ message: "Server Error" });

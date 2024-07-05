@@ -12,7 +12,7 @@ const PostSchema = new Schema({
   comments: [
     {
       comment: { type: String, required: false },
-      user: [{ type: Schema.Types.ObjectId, ref: "users", required: false }],
+      user: { type: Schema.Types.ObjectId, ref: "users", required: false },
     },
   ],
 });

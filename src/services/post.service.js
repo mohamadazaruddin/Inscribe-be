@@ -41,6 +41,24 @@ const getUserPost = (req, res) => {
   }
 };
 
+// to extract data
+const extractPostData = (data) => {
+  const extractedData = data.map(
+    ({ _id, content, createdAt, likes, comments, user }) => {
+      let userData = null;
+
+      if (user) {
+        const { _id: userId, userName, profileAvatar } = user;
+        userData = { userId, userName, profileAvatar };
+      }
+
+      return { _id, content, createdAt, likes, comments, user: userData };
+    }
+  );
+
+  return extractedData;
+};
+
 const getLatestPost = async (req, res) => {
   const { query } = req.query;
   try {
@@ -72,11 +90,9 @@ const getLatestPost = async (req, res) => {
         message: "Invalid query parameter, only 'new' or 'following' allowed",
       });
     }
-    res.status(200).json({ posts });
 
-    // Post.find().then((post) => {
-    //   res.status(200).json(post);
-    // });
+    const postContent = extractPostData(posts);
+    res.status(200).json({ postContent });
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -174,10 +190,12 @@ const getComments = async (req, res) => {
 
     const commentsWithUserDetails = post.comments.map((comment) => ({
       comment: comment.comment,
-      user: comment.user.map((user) => ({
-        userName: user.userName,
-        profileAvatar: user.profileAvatar,
-      })),
+      user: comment.user,
+      // user: comment.user.map((user) => ({
+      //   userName: user.userName,
+      //   profileAvatar: user.profileAvatar,
+      //   id: user._id,
+      // })),
     }));
     //  const extractedData = post.likes.map(({ userName, profileAvatar, }) => ({
     //    userName,
@@ -187,6 +205,7 @@ const getComments = async (req, res) => {
     res.status(200).json({
       post: {
         content: post.content,
+        id: post._id,
         user: post.user,
         createdAt: post.createdAt,
         likes: post.likes,
