@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const getUserData = (req, res) => {
@@ -7,16 +8,19 @@ const getUserData = (req, res) => {
     .populate({ path: "following", model: "user" })
     .populate({ path: "followers", model: "user" })
     .then((list) => {
-      const user = {
-        id: list._id,
-        username: list.userName,
-        password: list.profileAvatar,
-        followers: list.followers,
-        following: list.following,
-        accountCreatedAt: list.accountCreatedAt,
-      };
+      Post.find({ user: list._id }).then(async (post) => {
+        const user = {
+          id: list._id,
+          username: list.userName,
+          profilepicture: list.profileAvatar,
+          followers: list.followers,
+          following: list.following,
+          posts: post,
+          accountCreatedAt: list.accountCreatedAt,
+        };
 
-      res.send(user);
+        res.send(user);
+      });
     })
     .catch((err) => {
       res.send(err);
