@@ -179,11 +179,13 @@ const getComments = async (req, res) => {
   const postId = req.params.postId;
   try {
     const postId = req.params.postId;
-    const post = await Post.findById(postId).populate({
-      path: "comments.user",
-      select: "userName profileAvatar",
-      model: "user",
-    });
+    const post = await Post.findById(postId)
+      .populate({ path: "user", model: "user" })
+      .populate({
+        path: "comments.user",
+        select: "userName profileAvatar",
+        model: "user",
+      });
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
