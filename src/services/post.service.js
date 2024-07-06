@@ -180,7 +180,11 @@ const getComments = async (req, res) => {
   try {
     const postId = req.params.postId;
     const post = await Post.findById(postId)
-      .populate({ path: "user", model: "user" })
+      .populate({
+        path: "user",
+        select: "_id userName profileAvatar",
+        model: "user",
+      })
       .populate({
         path: "comments.user",
         select: "userName profileAvatar",
