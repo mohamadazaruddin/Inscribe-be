@@ -191,8 +191,8 @@ const getActivity = async (req, res) => {
           if (item.likes) {
             item.likes.forEach((like) => {
               combinedObjects.push({
-                type: "liked your post",
-                user: like.userName,
+                label: "liked your post",
+                userName: like.userName,
                 profileAvatar: like.profileAvatar,
               });
             });
@@ -200,10 +200,9 @@ const getActivity = async (req, res) => {
           if (item.comments) {
             item.comments.forEach((comment) => {
               combinedObjects.push({
-                type: "commented on your post",
-                user: comment.user.userName,
+                label: "commented on your post",
+                userName: comment.user.userName,
                 profileAvatar: comment.user.profileAvatar,
-                comment: comment.comment,
               });
             });
           }
