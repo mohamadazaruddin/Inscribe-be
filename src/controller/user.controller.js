@@ -6,6 +6,7 @@ const {
   getAllUser,
   getActivity,
   searchByUsername,
+  getSuggesstion,
 } = require("../services/user.service");
 
 exports.getdata = (req, res) => {
@@ -31,4 +32,7 @@ exports.searchByUsername = (req, res) => {
 };
 exports.getActivity = (req, res) => {
   getActivity(req, res);
+};
+exports.getSuggesstion = (req, res) => {
+  getSuggesstion(req, res);
 };

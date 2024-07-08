@@ -30,8 +30,13 @@ router.post("/:id/follow", auth, function (req, res) {
   userController.follow(req, res);
 });
 
+// get suggestion
+router.get("/:userId/suggestions", auth, function (req, res) {
+  userController.getSuggesstion(req, res);
+});
 // to follow someone
 router.get("/:userId/notifications", auth, function (req, res) {
   userController.getActivity(req, res);
 });
+
 module.exports = router;

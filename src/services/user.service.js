@@ -106,7 +106,7 @@ const getAllUser = async (req, res) => {
         profileAvatar,
       }));
 
-      res.status(200).json(users);
+      res.status(200).json(user);
     });
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
@@ -171,6 +171,7 @@ const searchByUsername = async (req, res) => {
 const getActivity = async (req, res) => {
   try {
     const userId = req.params.userId;
+
     let combinedObjects = [];
     Post.find({ user: userId })
       .populate({
@@ -185,7 +186,7 @@ const getActivity = async (req, res) => {
       })
       .then(async (user) => {
         if (!user.length > 0) {
-          res.status(200).json({ message: "No Post Found" });
+          res.status(204).json({ message: "No Post Found" });
         }
         user.forEach((item) => {
           if (item.likes) {
@@ -208,10 +209,33 @@ const getActivity = async (req, res) => {
           }
         });
 
-        res.status(200).json(combinedObjects);
+        res.status(200).json({ data: combinedObjects });
       });
   } catch (err) {
     res.status(500).json({ message: "server Error" });
+  }
+};
+
+const getSuggesstion = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    User.find().then((user) => {
+      if (!user) {
+        res.status(204).json({ message: "Users Not Found" });
+      }
+
+      const filteredData = user.filter(
+        (item) => !item.following.includes(userId)
+      );
+      const users = filteredData.map(({ _id, userName, profileAvatar }) => ({
+        _id,
+        userName,
+        profileAvatar,
+      }));
+      res.status(200).json(users);
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
   }
 };
 module.exports = {
@@ -222,4 +246,5 @@ module.exports = {
   getAllUser,
   searchByUsername,
   getActivity,
+  getSuggesstion,
 };
