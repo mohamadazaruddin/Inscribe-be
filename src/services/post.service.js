@@ -156,10 +156,16 @@ const addComment = async (req, res) => {
 const getlikes = async (req, res) => {
   try {
     const postId = req.params.postId;
-    const post = await Post.findById(postId).populate({
-      path: "likes",
-      model: "user",
-    });
+    const post = await Post.findById(postId)
+      .populate({
+        path: "user",
+        select: "_id userName profileAvatar",
+        model: "user",
+      })
+      .populate({
+        path: "likes",
+        model: "user",
+      });
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -168,7 +174,15 @@ const getlikes = async (req, res) => {
       profileAvatar,
     }));
 
-    res.status(200).json(extractedData);
+    res.status(200).json({
+      post: {
+        content: post.content,
+        id: post._id,
+        user: post.user,
+        createdAt: post.createdAt,
+        likes: extractedData,
+      },
+    });
   } catch (error) {
     console.log(error, "error");
     res.status(500).send({ message: "Server Error" });
