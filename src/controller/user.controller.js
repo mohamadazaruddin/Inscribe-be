@@ -4,7 +4,7 @@ const {
   login,
   follow,
   getAllUser,
-
+  getActivity,
   searchByUsername,
 } = require("../services/user.service");
 
@@ -28,4 +28,7 @@ exports.getAllUser = (req, res) => {
 };
 exports.searchByUsername = (req, res) => {
   searchByUsername(req, res);
+};
+exports.getActivity = (req, res) => {
+  getActivity(req, res);
 };

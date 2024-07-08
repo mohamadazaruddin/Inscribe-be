@@ -34,5 +34,6 @@ router.get("/:postId/like", auth, function (req, res) {
 router.get("/:postId/comment", auth, function (req, res) {
   postController.getComments(req, res);
 });
+// for getting all comments
 
 module.exports = router;

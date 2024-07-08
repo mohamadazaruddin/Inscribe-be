@@ -31,5 +31,7 @@ router.post("/:id/follow", auth, function (req, res) {
 });
 
 // to follow someone
-
+router.get("/:userId/notifications", auth, function (req, res) {
+  userController.getActivity(req, res);
+});
 module.exports = router;

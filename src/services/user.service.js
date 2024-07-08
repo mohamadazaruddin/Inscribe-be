@@ -168,6 +168,53 @@ const searchByUsername = async (req, res) => {
   }
 };
 
+const getActivity = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    let combinedObjects = [];
+    Post.find({ user: userId })
+      .populate({
+        path: "likes",
+        select: "_id userName profileAvatar",
+        model: "user",
+      })
+      .populate({
+        path: "comments.user",
+        select: "_id userName profileAvatar",
+        model: "user",
+      })
+      .then(async (user) => {
+        if (!user.length > 0) {
+          res.status(200).json({ message: "No Post Found" });
+        }
+        user.forEach((item) => {
+          if (item.likes) {
+            item.likes.forEach((like) => {
+              combinedObjects.push({
+                type: "liked your post",
+                user: like.userName,
+                profileAvatar: like.profileAvatar,
+              });
+            });
+          }
+          if (item.comments) {
+            item.comments.forEach((comment) => {
+              combinedObjects.push({
+                type: "commented on your post",
+                user: comment.user.userName,
+                profileAvatar: comment.user.profileAvatar,
+                comment: comment.comment,
+              });
+            });
+          }
+        });
+
+        res.status(200).json(combinedObjects);
+      });
+  } catch (err) {
+    res.status(500).json({ message: "server Error" });
+  }
+};
 module.exports = {
   getUserData,
   createUser,
@@ -175,4 +222,5 @@ module.exports = {
   follow,
   getAllUser,
   searchByUsername,
+  getActivity,
 };
