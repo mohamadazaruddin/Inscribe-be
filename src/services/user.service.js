@@ -74,6 +74,7 @@ const login = (req, res) => {
     User.find({ userName: username }).then(async (user) => {
       if (!user.length > 0) {
         res.status(400).json({ message: "Invalid Credentials" });
+        return;
       } else {
         const isPasswordMatch = await bcrypt.compare(
           password,
@@ -106,6 +107,7 @@ const getAllUser = async (req, res) => {
     User.find().then((user) => {
       if (!user) {
         res.status(204).json({ message: "Users Not Found" });
+        return;
       }
 
       const users = user.map(({ _id, userName, profileAvatar }) => ({
@@ -126,12 +128,12 @@ const follow = async (req, res) => {
     const { followId } = req.body;
     User.findById(req.params.id).then((user) => {
       if (!user) {
-        res.status(204).json({ message: "Provide Your userId" });
+        return res.status(204).json({ message: "Provide Your userId" });
       }
       User.findById(followId).then(async (followingUser) => {
         console.log(followingUser._id, "to follow", user._id, "me");
         if (!followingUser) {
-          res.status(204).json({ message: "User Not userId" });
+          return res.status(204).json({ message: "User Not userId" });
         }
         const addtoFollow = await User.findOneAndUpdate(
           { _id: req.params.id },
@@ -194,7 +196,7 @@ const getActivity = async (req, res) => {
       })
       .then(async (user) => {
         if (!user.length > 0) {
-          res.status(204).json({ message: "No Post Found" });
+          return res.status(204).json({ message: "No Post Found" });
         }
         user.forEach((item) => {
           if (item.likes) {
