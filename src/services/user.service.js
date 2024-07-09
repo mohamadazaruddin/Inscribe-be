@@ -5,8 +5,16 @@ const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const getUserData = (req, res) => {
   User.findById(req.params.id)
-    .populate({ path: "following", model: "user" })
-    .populate({ path: "followers", model: "user" })
+    .populate({
+      path: "following",
+      model: "user",
+      select: "_id userName profileAvatar",
+    })
+    .populate({
+      path: "followers",
+      model: "user",
+      select: "_id userName profileAvatar",
+    })
     .then((list) => {
       Post.find({ user: list._id }).then(async (post) => {
         const user = {
@@ -225,7 +233,7 @@ const getSuggesstion = async (req, res) => {
       }
 
       const filteredData = user.filter(
-        (item) => !item.following.includes(userId)
+        (item) => !item.followers.includes(`${userId}`)
       );
       const users = filteredData.map(({ _id, userName, profileAvatar }) => ({
         _id,
